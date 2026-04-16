@@ -9,132 +9,62 @@
 :root{
   --bg:#0d1117;--surface:#161b22;--surface2:#1c2128;--border:#30363d;
   --teal:#0A87AA;--teal-light:#39c5e0;--teal-glow:rgba(10,135,170,.16);
-  --primary:#0ea5e9; /* Blau für Prostata */
   --text:#e6edf3;--text-muted:#8b949e;--radius-lg:16px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{
-  background:var(--bg);
-  color:var(--text);
-  font-family:'DM Sans',sans-serif;
-  line-height:1.65;
-  padding:40px 20px;
+  background:var(--bg); color:var(--text);
+  font-family:'DM Sans',sans-serif; line-height:1.65; padding:40px 20px;
 }
-.container { 
-  max-width: 900px; 
-  margin: 0 auto; 
-}
-.header-title{
-  font-family:'Space Mono',monospace;
-  font-size:14px;
-  color:var(--teal-light);
-  letter-spacing:.06em;
-  text-transform:uppercase;
-  margin-bottom:10px;
-}
-h1 { 
-  font-size: 32px; 
-  margin-bottom: 10px; 
-  line-height: 1.2;
-}
-.subtitle { 
-  color: var(--text-muted); 
-  margin-bottom: 40px; 
-  font-size: 16px;
-  max-width: 700px;
-}
-.module-grid { 
-  display: grid; 
-  grid-template-columns: 1fr; 
-  gap: 20px; 
-}
-@media(min-width: 600px) { 
-  .module-grid { grid-template-columns: 1fr 1fr; } 
-}
-.card {
-  background: var(--surface); 
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg); 
-  padding: 24px;
-  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-  text-decoration: none; 
-  color: inherit; 
-  display: block;
-  position: relative;
-}
-.card:hover { 
-  transform: translateY(-4px); 
-  border-color: var(--teal);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-}
-.card h2 { 
-  font-size: 20px; 
-  margin-bottom: 8px; 
-  color: var(--text); 
-}
-.card p { 
-  font-size: 14px; 
-  color: var(--text-muted);
-}
-.status-tag { 
-  display: inline-block; 
-  font-family: 'Space Mono', monospace; 
-  font-size: 11px;
-  background: var(--teal-glow); 
-  color: var(--teal-light); 
-  border: 1px solid var(--teal);
-  padding: 4px 10px; 
-  border-radius: 999px; 
-  margin-bottom: 16px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-/* Spezieller Tag für aktive Module */
-.status-active {
-  background: rgba(63, 185, 80, 0.1);
-  color: #3fb950;
-  border-color: #3fb950;
-}
+.container { max-width: 900px; margin: 0 auto; }
+.header-title{ font-family:'Space Mono',monospace; font-size:14px; color:var(--teal-light); text-transform:uppercase; margin-bottom:10px; }
+h1 { font-size: 32px; margin-bottom: 10px; }
+.subtitle { color: var(--text-muted); margin-bottom: 40px; font-size: 16px; }
+.module-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+@media(min-width: 600px) { .module-grid { grid-template-columns: 1fr 1fr; } }
 
-/* Styling für gesperrte Module */
-.card.locked {
-  opacity: 0.5;
-  cursor: not-allowed;
+/* Die Karten-Logik */
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); 
+  padding: 24px; transition: all 0.2s ease; text-decoration: none; color: inherit; display: block;
 }
-.card.locked:hover {
-  transform: none;
-  border-color: var(--border);
+.card:hover { transform: translateY(-4px); border-color: var(--teal); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+.card h2 { font-size: 20px; margin-bottom: 8px; color: #fff; }
+.card p { font-size: 14px; color: var(--text-muted); }
+
+.status-tag { 
+  display: inline-block; font-family: 'Space Mono', monospace; font-size: 11px;
+  background: rgba(63, 185, 80, 0.15); color: #3fb950; border: 1px solid #3fb950;
+  padding: 4px 10px; border-radius: 999px; margin-bottom: 16px; text-transform: uppercase;
 }
-.card.locked .status-tag {
-  background: transparent;
-  color: var(--text-muted);
-  border-color: var(--border);
-}
+/* Zukünftige Module */
+.card.coming-soon { opacity: 0.6; cursor: default; pointer-events: none; }
+.card.coming-soon .status-tag { background: var(--surface2); color: var(--text-muted); border-color: var(--border); }
 </style>
 </head>
 <body>
 <div class="container">
   <div class="header-title">Zentrale Leitstelle // Praxisunterricht</div>
   <h1>Willkommen im Lernzentrum</h1>
-  <p class="subtitle">Wähle hier dein aktuelles Modul aus. Alle verlinkten Missionen sind nun für die Bearbeitung freigeschaltet.</p>
+  <p class="subtitle">Beide klinischen Missionen sind nun für die Bearbeitung freigeschaltet. Wähle eine aus, um zu starten.</p>
   
   <div class="module-grid">
     <a href="mission_mamma_optimized_v3.html" class="card">
-      <span class="status-tag status-active">Aktiv</span>
+      <span class="status-tag">Aktiv</span>
       <h2>Mission Mamma</h2>
-      <p>Von der Fallakte zum PLCT-Setting. Bearbeite die Pflichtspur und beachte die Rotationsregeln.</p>
+      <p>Lagerung & DIBH-Technik. Bearbeite die Pflichtspur für das Thorax-Modul.</p>
     </a>
     
     <a href="mission_prostata_fall_herr_m.html" class="card">
-      <span class="status-tag status-active">Aktiv</span>
+      <span class="status-tag">Aktiv</span>
       <h2>Mission Prostata</h2>
-      <p>Begleite Herrn M. durch seine Strahlentherapie. Analysiere das CBCT und triff klinische Entscheidungen.</p>
+      <p>Fallbeispiel Herr M.: Fokus auf Blasen-/Rektumfüllung und klinische Entscheidungsfindung.</p>
     </a>
 
-    <div class="card locked">
+    <div class="card coming-soon">
       <span class="status-tag">In Vorbereitung</span>
       <h2>Strahlenschutz-Basics</h2>
-      <p>Interaktive Wiederholung der wichtigsten Grundlagen für den Praxisalltag.</p>
+      <p>Interaktive Wiederholung der Grundlagen. Demnächst verfügbar.</p>
     </div>
   </div>
 </div>
