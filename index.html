@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MTR Lernzentrum – Startseite</title>
+<title>MTR Lernzentrum – Zentrale Leitstelle</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* Gleiche Farbvariablen wie in deinem bestehenden Projekt */
 :root{
   --bg:#0d1117;--surface:#161b22;--surface2:#1c2128;--border:#30363d;
   --teal:#0A87AA;--teal-light:#39c5e0;--teal-glow:rgba(10,135,170,.16);
+  --primary:#0ea5e9; /* Blau für Prostata */
   --text:#e6edf3;--text-muted:#8b949e;--radius-lg:16px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -56,14 +56,16 @@ h1 {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg); 
   padding: 24px;
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
   text-decoration: none; 
   color: inherit; 
   display: block;
+  position: relative;
 }
 .card:hover { 
   transform: translateY(-4px); 
-  border-color: var(--teal); 
+  border-color: var(--teal);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
 .card h2 { 
   font-size: 20px; 
@@ -87,10 +89,21 @@ h1 {
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
-/* Styling für gesperrte/zukünftige Module */
+/* Spezieller Tag für aktive Module */
+.status-active {
+  background: rgba(63, 185, 80, 0.1);
+  color: #3fb950;
+  border-color: #3fb950;
+}
+
+/* Styling für gesperrte Module */
 .card.locked {
   opacity: 0.5;
-  pointer-events: none;
+  cursor: not-allowed;
+}
+.card.locked:hover {
+  transform: none;
+  border-color: var(--border);
 }
 .card.locked .status-tag {
   background: transparent;
@@ -103,26 +116,26 @@ h1 {
 <div class="container">
   <div class="header-title">Zentrale Leitstelle // Praxisunterricht</div>
   <h1>Willkommen im Lernzentrum</h1>
-  <p class="subtitle">Wähle hier deine aktuelle Aufgabe bzw. das aktuelle Modul aus. Folge anschließend den spezifischen Arbeitsanweisungen in der jeweiligen Lernapp.</p>
+  <p class="subtitle">Wähle hier dein aktuelles Modul aus. Alle verlinkten Missionen sind nun für die Bearbeitung freigeschaltet.</p>
   
   <div class="module-grid">
     <a href="mission_mamma_optimized_v3.html" class="card">
-      <span class="status-tag">Aktiv</span>
+      <span class="status-tag status-active">Aktiv</span>
       <h2>Mission Mamma</h2>
-      <p>Von der Fallakte zum PLCT-Setting. Bearbeite die Pflichtspur und beachte die Rotationsregeln für die Praxisstation.</p>
+      <p>Von der Fallakte zum PLCT-Setting. Bearbeite die Pflichtspur und beachte die Rotationsregeln.</p>
     </a>
     
-    <a href="#" class="card locked">
-      <span class="status-tag">In Vorbereitung</span>
+    <a href="mission_prostata_fall_herr_m.html" class="card">
+      <span class="status-tag status-active">Aktiv</span>
       <h2>Mission Prostata</h2>
-      <p>Dieses Modul befindet sich derzeit in der Entwicklung und wird bald für euch freigeschaltet.</p>
+      <p>Begleite Herrn M. durch seine Strahlentherapie. Analysiere das CBCT und triff klinische Entscheidungen.</p>
     </a>
 
-    <a href="#" class="card locked">
+    <div class="card locked">
       <span class="status-tag">In Vorbereitung</span>
       <h2>Strahlenschutz-Basics</h2>
       <p>Interaktive Wiederholung der wichtigsten Grundlagen für den Praxisalltag.</p>
-    </a>
+    </div>
   </div>
 </div>
 </body>
