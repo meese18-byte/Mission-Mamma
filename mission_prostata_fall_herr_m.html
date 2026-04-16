@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mission Prostata – Lernapp v1</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Urologie / Prostata Farbschema: Blautöne */
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --surface2: #334155;
+  --surface3: #475569;
+  --border: #334155;
+  --primary: #0ea5e9; /* Sky blue */
+  --primary-light: #38bdf8;
+  --primary-glow: rgba(14, 165, 233, 0.16);
+  --accent: #f59e0b; /* Amber/Orange for warnings/attention */
+  --accent-glow: rgba(245, 158, 11, 0.16);
+  --green: #10b981;
+  --text: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --radius: 12px;
+}
+body {
+  font-family: 'DM Sans', sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  margin: 0; padding: 20px;
+  line-height: 1.6;
+}
+h1, h2, h3 { font-family: 'Space Mono', monospace; }
+.container { max-width: 800px; margin: 0 auto; }
+.header { text-align: center; margin-bottom: 40px; padding: 30px; background: var(--surface); border-radius: var(--radius); border-bottom: 4px solid var(--primary); }
+.header h1 { color: var(--primary-light); margin: 0 0 10px 0; font-size: 2.2rem; }
+.case-study { background: var(--surface2); padding: 20px; border-radius: var(--radius); border-left: 4px solid var(--accent); margin-bottom: 30px; }
+.case-study h2 { margin-top: 0; color: var(--accent); font-size: 1.2rem; }
+.mission { background: var(--surface); padding: 25px; border-radius: var(--radius); margin-bottom: 25px; border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.mission h2 { color: var(--primary-light); margin-top: 0; font-size: 1.4rem; display: flex; justify-content: space-between; align-items: center; }
+.mission h2 span.status { font-size: 0.9rem; color: var(--text-dim); }
+.mission.completed { border-color: var(--green); }
+.mission.completed h2 span.status { color: var(--green); }
+.task { margin-bottom: 15px; }
+label.checkbox-label { display: flex; align-items: flex-start; cursor: pointer; padding: 10px; background: var(--surface2); border-radius: 8px; transition: background 0.2s; }
+label.checkbox-label:hover { background: var(--surface3); }
+input[type="checkbox"] { margin-top: 5px; margin-right: 15px; width: 18px; height: 18px; accent-color: var(--primary); }
+textarea, input[type="text"] { width: 100%; box-sizing: border-box; padding: 12px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 8px; font-family: inherit; margin-top: 8px; resize: vertical; }
+textarea:focus, input[type="text"]:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+.radio-group { background: var(--bg); padding: 15px; border-radius: 8px; border: 1px solid var(--border); }
+.radio-option { display: block; margin-bottom: 10px; cursor: pointer; }
+.radio-option input { margin-right: 10px; accent-color: var(--accent); }
+.export-btn { display: block; width: 100%; padding: 15px; background: var(--primary); color: #fff; text-align: center; border: none; border-radius: var(--radius); font-size: 1.1rem; font-weight: bold; cursor: pointer; font-family: 'Space Mono', monospace; transition: background 0.2s; margin-top: 40px; }
+.export-btn:hover { background: var(--primary-light); }
+.video-container { background: #000; border-radius: 8px; overflow: hidden; margin-top: 15px; border: 1px solid var(--border); }
+video { display: block; width: 100%; }
+.progress-bar { height: 8px; background: var(--surface2); border-radius: 4px; margin-bottom: 30px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--green); width: 0%; transition: width 0.3s ease; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>Mission Prostata</h1>
+    <p>Fallbasierter interaktiver Lernbegleiter für MTR-Auszubildende (Linac)</p>
+  </div>
+
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+  <div class="case-study">
+    <h2>📄 Patientenakte: Fallbeispiel Herr M.</h2>
+    <p><strong>Diagnose:</strong> Prostata-Ca (azinäres AdenoCa, Gleason 5, pT1c N0 M0). Watchful Waiting seit 2014, nun PSA-Anstieg.</p>
+    <p><strong>Körperbau & Anamnese:</strong> 187 cm groß, 66 kg (sehr schlank). Sportlich (Westernreiter). Z.n. Leistenbruch, v. Willebrand Faktorenleiden.</p>
+    <p><strong>Therapieplan:</strong> Lokale RT Prostataloge (30 x 2 Gy) + PET-positiver Boost (bis 72 Gy).<br>
+    <strong>Besonderheit:</strong> Herr M. steht unter Zeitdruck. Er möchte die Therapie zwingend bis zum 06.03. abschließen, da er danach auf eine Vortragsreise geht.</p>
+  </div>
+
+  <!-- Mission 1 -->
+  <div class="mission" id="m1">
+    <h2>Mission 1: Fallanalyse & Orientierung <span class="status">Offen</span></h2>
+    <p>Die Akte liegt vor. Bevor Herr M. zum Aufklärungsgespräch kommt, musst du die Situation einschätzen.</p>
+    <div class="task">
+      <label class="checkbox-label">
+        <input type="checkbox" id="m1_c1" data-mission="m1" data-label="Körpergröße beachtet (187 cm)">
+        <span>Der Patient ist mit 187 cm sehr groß. Ich muss bei der Lagerung (Tischlänge, Gantry-Kollision) besonders auf die Füße achten.</span>
+      </label>
+    </div>
+    <div class="task">
+      <label class="checkbox-label">
+        <input type="checkbox" id="m1_c2" data-mission="m1" data-label="Gewicht beachtet (66 kg)">
+        <span>Mit 66 kg bei 187 cm ist er sehr schlank. Ich muss auf Druckstellen am Becken/Steiß auf dem harten Tisch achten.</span>
+      </label>
+    </div>
+    <div class="task">
+      <label>Aus der Akte geht hervor, dass Herr M. unter Zeitdruck steht (Vortragsreise). Welches Risiko birgt das für die Behandlungskommunikation?</label>
+      <textarea id="m1_t1" rows="3" placeholder="Deine Gedanken zur Compliance und Ungeduld..." data-label="Risiko Zeitdruck"></textarea>
+    </div>
+  </div>
+
+  <!-- Mission 2 -->
+  <div class="mission" id="m2">
+    <h2>Mission 2: Patientenaufklärung (Inneres Becken) <span class="status">Offen</span></h2>
+    <p>Das wichtigste bei der Prostata ist nicht die Hautmarkierung, sondern das, was im Patienten passiert.</p>
+    <div class="task">
+      <label class="checkbox-label">
+        <input type="checkbox" id="m2_c1" data-mission="m2" data-label="Blasenprotokoll erklärt">
+        <span>Ich habe Herrn M. erklärt, warum eine <strong>volle Blase</strong> wichtig ist (Schiebt Dünndarmschlingen aus dem Strahlenfeld, fixiert die Prostata).</span>
+      </label>
+    </div>
+    <div class="task">
+      <label class="checkbox-label">
+        <input type="checkbox" id="m2_c2" data-mission="m2" data-label="Rektumprotokoll erklärt">
+        <span>Ich habe ihm erklärt, dass das Rektum möglichst <strong>leer und gasfrei</strong> sein muss, damit die Prostata nicht nach ventral geschoben wird.</span>
+      </label>
+    </div>
+    <div class="task">
+      <label>Herr M. fragt: "Warum ist das so schlimm, wenn ich vorher auf Toilette gehe? Sie sehen doch auf dem Bild, wo die Prostata ist." Was antwortest du?</label>
+      <textarea id="m2_t1" rows="3" placeholder="Deine patientengerechte Erklärung..." data-label="Erklärung volle Blase"></textarea>
+    </div>
+  </div>
+
+  <!-- Mission 3 -->
+  <div class="mission" id="m3">
+    <h2>Mission 3: Setup & Ersteinstellung <span class="status">Offen</span></h2>
+    <p>Es ist Tag 1. Der Bestrahlungsraum muss für Herrn M. vorbereitet werden.</p>
+    <div class="task">
+      <label class="checkbox-label">
+        <input type="checkbox" id="m3_c1" data-mission="m3" data-label="Lagerungshilfen bereit">
+        <span>Rückenlage: Kniestep (oder Knierolle) und Fußschale (ProStep) sind gemäß Planungs-CT aufgebaut.</span>
+      </label>
+    </div>
+    <div class="task">
+      <label class="checkbox-label">
+        <input type="checkbox" id="m3_c2" data-mission="m3" data-label="Identitätskontrolle">
+        <span>Aktive Identitätskontrolle durchgeführt (Name + Geburtsdatum vom Patienten nennen lassen).</span>
+      </label>
+    </div>
+    <div class="task">
+      <label class="checkbox-label">
+        <input type="checkbox" id="m3_c3" data-mission="m3" data-label="Lagerung reproduzierbar">
+        <span>Becken liegt gerade, Beine entspannt auf dem Kniestep, Tattoos / Markierungen stimmen mit den Lasern überein.</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Mission 4 -->
+  <div class="mission" id="m4">
+    <h2>Mission 4: IGRT & CBCT Matching (Video-Analyse) <span class="status">Offen</span></h2>
+    <p>Der Patient liegt, die Laser passen. Nun machen wir das tägliche CBCT (Cone Beam CT), um das innere Becken zu kontrollieren.</p>
+    <div class="video-container">
+      <!-- Video Einbettung gemäß Vorgabe -->
+      <video controls>
+        <source src="20260311_123902.mp4" type="video/mp4">
+        Dein Browser unterstützt das Video-Tag nicht.
+      </video>
+    </div>
+    <p><small><em>Hinweis: Betrachte das Video/CT-Schnittbild. Achte auf Symphyse, Blase (schwarz/grau, ventral) und Rektum (dorsal).</em></small></p>
+    <div class="task">
+      <label>Was sind beim Prostata-Matching die 3 wichtigsten knöchernen / anatomischen Strukturen für die Grobausrichtung?</label>
+      <textarea id="m4_t1" rows="2" placeholder="z.B. Symphyse, Femurköpfe..." data-label="Matching Strukturen"></textarea>
+    </div>
+    <div class="task">
+      <label class="checkbox-label">
+        <input type="checkbox" id="m4_c1" data-mission="m4" data-label="Weichteil-Matching verstanden">
+        <span>Nach dem Knochen-Match beurteile ich die Weichteile (Prostata-Loge, Blasenfüllung, Rektumwand).</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Mission 5 -->
+  <div class="mission" id="m5">
+    <h2>Mission 5: Die kritische Entscheidung (Mini-Fallbeispiel) <span class="status">Offen</span></h2>
+    <p><strong>Szenario:</strong> Du betrachtest das aktuelle CBCT von Herrn M. Das Rektum ist massiv mit Luft gefüllt (aufgebläht). Die Prostata-Loge ist dadurch um 8 mm nach ventral und cranial verschoben. Die Blase ist zudem nur mäßig gefüllt.</p>
+    <p>Herr M. wirkt genervt und sagt: <em>"Können wir anfangen? Ich habe nachher noch einen Termin für meine Reiseplanung!"</em></p>
+    <div class="task">
+      <label><strong>Wie entscheidest du dich?</strong> (Wähle die fachlich sicherste Option)</label>
+      <div class="radio-group">
+        <label class="radio-option">
+          <input type="radio" name="m5_decision" value="bestrahlen" data-label="Entscheidung: Direkt bestrahlen">
+          <strong>A. Bestrahlen:</strong> Ich verschiebe den Tisch um 8mm, um das Isozentrum an die neue Lage anzupassen und bestrahle zügig, um den Patienten nicht zu verärgern.
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="m5_decision" value="abbruch" data-label="Entscheidung: Warten/Neu lagern">
+          <strong>B. Warten & Korrigieren:</strong> Ich nehme den Patienten vom Tisch. Er muss nochmal auf die Toilette (Luft ablassen) und Wasser trinken. Wir versuchen es in 30 Minuten erneut.
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="m5_decision" value="arzt" data-label="Entscheidung: Arzt rufen">
+          <strong>C. Arzt hinzuziehen:</strong> Ich rufe den Arzt, damit er die Bestrahlung in dieser falschen Position absegnet.
+        </label>
+      </div>
+    </div>
+    <div class="task">
+      <label>Begründe deine Entscheidung kurz (Was passiert mit der Dosis bei Option A?):</label>
+      <textarea id="m5_t1" rows="3" placeholder="Begründung (Stichwort: Risikoorgane, Toxizität)..." data-label="Begründung Fallbeispiel"></textarea>
+    </div>
+  </div>
+
+  <!-- Mission 6 -->
+  <div class="mission" id="m6">
+    <h2>Mission 6: Kommunikation bei Abweichungen <span class="status">Offen</span></h2>
+    <p>Du hast dich fachlich korrekt entschieden (Warten). Nun musst du das Herrn M. vermitteln, der wegen seiner Vortragsreise ohnehin gestresst ist.</p>
+    <div class="task">
+      <label>Formuliere einen wertschätzenden, aber bestimmten Satz, wie du ihm erklärst, dass er noch einmal vom Tisch muss:</label>
+      <textarea id="m6_t1" rows="3" placeholder="Herr M., mir ist aufgefallen, dass..." data-label="Kommunikation Abweichung"></textarea>
+    </div>
+    <div class="task">
+      <label class="checkbox-label">
+        <input type="checkbox" id="m6_c1" data-mission="m6" data-label="Verantwortung übernommen">
+        <span>Mir ist bewusst: Patientensicherheit und reproduzierbare Qualität stehen IMMER über dem Zeitdruck des Patienten.</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Mission 7 -->
+  <div class="mission" id="m7">
+    <h2>Mission 7: Nebenwirkungen & Pflege (Woche 4) <span class="status">Offen</span></h2>
+    <p>Herr M. hat nun 20 Fraktionen hinter sich. Die akuten Nebenwirkungen nehmen zu.</p>
+    <div class="task">
+      <label class="checkbox-label">
+        <input type="checkbox" id="m7_c1" data-mission="m7" data-label="Zystitis erfragt">
+        <span>Ich frage gezielt nach Brennen beim Wasserlassen (Dysurie) und häufigem Harndrang (Pollakisurie).</span>
+      </label>
+    </div>
+    <div class="task">
+      <label class="checkbox-label">
+        <input type="checkbox" id="m7_c2" data-mission="m7" data-label="Proktitis erfragt">
+        <span>Ich frage (taktvoll) nach Stuhlgangsveränderungen (Diarrhoe, Schmerzen), da das Rektum ein direktes Risikoorgan ist.</span>
+      </label>
+    </div>
+    <div class="task">
+      <label>Welche allgemeine Pflege-Empfehlung gibst du ihm bei beginnender Proktitis/Diarrhoe?</label>
+      <input type="text" id="m7_t1" placeholder="z.B. ballaststoffarme Kost, Arztvorstellung..." data-label="Pflege bei Proktitis">
+    </div>
+  </div>
+
+  <button class="export-btn" onclick="exportReport()">Lernprotokoll als PDF/Druck exportieren</button>
+
+</div>
+
+<script>
+  // Simple State Management
+  const TOTAL_MISSIONS = 7;
+  let state = JSON.parse(localStorage.getItem('mission_prostata_state')) || { completed: [], fields: {} };
+
+  function initApp() {
+    // Restore fields
+    document.querySelectorAll('input[type="checkbox"], input[type="radio"], input[type="text"], textarea').forEach(el => {
+      if(state.fields[el.id || el.name]) {
+        if(el.type === 'checkbox') el.checked = state.fields[el.id];
+        else if (el.type === 'radio') {
+          if(el.value === state.fields[el.name]) el.checked = true;
+        }
+        else el.value = state.fields[el.id];
+      }
+      
+      el.addEventListener('change', (e) => {
+        if(e.target.type === 'radio') {
+            state.fields[e.target.name] = e.target.value;
+        } else {
+            state.fields[e.target.id] = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+        }
+        checkMissions();
+        saveState();
+      });
+      el.addEventListener('keyup', (e) => {
+        state.fields[e.target.id] = e.target.value;
+        checkMissions();
+        saveState();
+      });
+    });
+    checkMissions();
+  }
+
+  function checkMissions() {
+    let completedCount = 0;
+    
+    // Check M1
+    if(document.getElementById('m1_c1').checked && document.getElementById('m1_c2').checked && document.getElementById('m1_t1').value.length > 5) markMission('m1', true); else markMission('m1', false);
+    // Check M2
+    if(document.getElementById('m2_c1').checked && document.getElementById('m2_c2').checked && document.getElementById('m2_t1').value.length > 5) markMission('m2', true); else markMission('m2', false);
+    // Check M3
+    if(document.getElementById('m3_c1').checked && document.getElementById('m3_c2').checked && document.getElementById('m3_c3').checked) markMission('m3', true); else markMission('m3', false);
+    // Check M4
+    if(document.getElementById('m4_c1').checked && document.getElementById('m4_t1').value.length > 5) markMission('m4', true); else markMission('m4', false);
+    // Check M5 (Radio must be selected and text entered)
+    const m5radio = document.querySelector('input[name="m5_decision"]:checked');
+    if(m5radio && document.getElementById('m5_t1').value.length > 5) markMission('m5', true); else markMission('m5', false);
+    // Check M6
+    if(document.getElementById('m6_c1').checked && document.getElementById('m6_t1').value.length > 5) markMission('m6', true); else markMission('m6', false);
+    // Check M7
+    if(document.getElementById('m7_c1').checked && document.getElementById('m7_c2').checked && document.getElementById('m7_t1').value.length > 3) markMission('m7', true); else markMission('m7', false);
+
+    completedCount = document.querySelectorAll('.mission.completed').length;
+    document.getElementById('progressFill').style.width = (completedCount / TOTAL_MISSIONS * 100) + '%';
+  }
+
+  function markMission(id, isDone) {
+    const el = document.getElementById(id);
+    const status = el.querySelector('.status');
+    if(isDone) {
+      el.classList.add('completed');
+      status.innerText = 'Erledigt ✓';
+    } else {
+      el.classList.remove('completed');
+      status.innerText = 'Offen';
+    }
+  }
+
+  function saveState() {
+    localStorage.setItem('mission_prostata_state', JSON.stringify(state));
+  }
+
+  function escapeHtml(unsafe) {
+    return (unsafe||"").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+  }
+
+  function exportReport() {
+    const lines = [];
+    lines.push('================================================');
+    lines.push('  LERNPROTOKOLL: MISSION PROSTATA (FALL HERR M.)');
+    lines.push('================================================\n');
+    
+    document.querySelectorAll('.mission').forEach((mission, index) => {
+      lines.push(`-- MISSION ${index + 1}: ${mission.querySelector('h2').innerText.replace(' Offen','').replace(' Erledigt ✓','').trim()} --`);
+      
+      // Checkboxes & Texts in this mission
+      mission.querySelectorAll('input[type="checkbox"], input[type="text"], textarea').forEach(el => {
+        let val = '';
+        if(el.type === 'checkbox') val = el.checked ? '[X] Ja' : '[ ] Nein';
+        else val = el.value.trim() || '(Keine Eingabe)';
+        lines.push(`${el.dataset.label}:\n${val}\n`);
+      });
+      
+      // Radios
+      const radios = mission.querySelectorAll('input[type="radio"]:checked');
+      if(radios.length > 0) {
+         lines.push(`Gewählte Entscheidung:\n${radios[0].dataset.label}\n`);
+      }
+      lines.push('');
+    });
+
+    const content = lines.join('\n');
+    const win = window.open('', '_blank');
+    if(!win) { alert("Popup-Blocker verhindern den Export. Bitte erlauben."); return; }
+    
+    win.document.write(`
+      <!DOCTYPE html>
+      <html lang="de">
+      <head>
+        <meta charset="UTF-8">
+        <title>Export Mission Prostata</title>
+        <style>
+          body { font-family: monospace; white-space: pre-wrap; padding: 40px; background: #fff; color: #000; font-size: 14px; line-height: 1.5; }
+          button { margin-bottom: 20px; padding: 10px 20px; font-family: inherit; font-weight: bold; background: #0ea5e9; color: #fff; border: none; cursor: pointer; }
+          @media print { button { display: none; } }
+        </style>
+      </head>
+      <body>
+        <button onclick="window.print()">🖨️ Protokoll drucken / als PDF speichern</button>
+        <div>${escapeHtml(content)}</div>
+      </body>
+      </html>
+    `);
+    win.document.close();
+  }
+
+  window.onload = initApp;
+</script>
+</body>
+</html>
